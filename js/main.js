@@ -18,7 +18,8 @@ var MAP_PIN_HIGHT = 70;
 var MAP_WIDTH = 1200;
 var MAP_MIN_HIGHT = 130;
 var MAP_MAX_HIGHT = 630;
-
+var MAP_PIN_MAIN_WIDTH = 65;
+var MAP_PIN_MAIN_HEIGHT = 85;
 // функция случайного числа max
 var getRandomNumber = function (max) {
   return Math.floor(max * Math.random());
@@ -34,15 +35,83 @@ var maxNumberX = MAP_WIDTH - MAP_GAP_X;
 var minNumberY = MAP_MIN_HIGHT;
 var maxNumberY = MAP_MAX_HIGHT;
 
-var mapUser = document.querySelector('.map');
-mapUser.classList.remove('map--faded');
+var mapPinMain = document.querySelector('.map__pin--main');
+var inputAddress = document.querySelector('#address');
+
+
+var mapPinLocation = function () {
+  var vrt = {
+    open: {
+      left: 570,
+      top: 375,
+    },
+  };
+  inputAddress.placeholder = vrt.open.left + Math.floor(MAP_PIN_MAIN_WIDTH / 2) + ' ' + (vrt.open.top + MAP_PIN_MAIN_HEIGHT);
+};
+mapPinLocation();
+
+
+// Ф-ия откл/вкл полей формы
+// var getDisabledFieldset = function (field) {
+//   for (var k = 0; k < field.length; k++) {
+//     field[k].setAttribute('disabled', 'true');
+//   }
+// };
+
+// var getFieldset = function (field) {
+//   for (var k = 0; k < field.length; k++) {
+//     field[k].removeAttribute('disabled');
+//   }
+// };
+
+// // Отключение полей формы объявления
+// var fieldsetForm = document.querySelector('.ad-form--disabled');
+// getDisabledFieldset(fieldsetForm);
+
+// // Отключение полей формы на карте
+// var fieldsetFormMap = document.querySelector('.map__filters');
+// getDisabledFieldset(fieldsetFormMap);
+
+var getMapOpen = function () {
+  var mapCity = document.querySelector('.map');
+  mapCity.classList.remove('map--faded');
+};
+// getMapOpen();
+
+// var mapPinMain = document.querySelector('.map__pin--main');
+// mapPinMain.addEventListener('mousedown', function (evt) {
+//   if (evt.which === 1) {
+//     getMapOpen();
+//     getFieldset(fieldsetForm);
+//     getFieldset(fieldsetFormMap);
+//   }
+// });
+
+// mapPinMain.addEventListener('keydown', function (evt) {
+//   if (evt.key === 'Enter') {
+//     getMapOpen();
+//     getFieldset(fieldsetForm);
+//     getFieldset(fieldsetFormMap);
+//   }
+// });
+
+// var type = document.querySelector('#type');
+// var price = document.querySelector('#price');
+
+
+// type.addEventListener('change', function () {
+//   if () {
+
+//   }
+// });
+
 
 var placements = [];
 var fillPlacements = function () {
   for (var j = 1; j <= OBJECT_COUNT; j++) {
     var location = {
-      x: getRangeRandomNumber(minNumberX, maxNumberX) - MAP_PIN_WIDTH / 2 + 'px',
-      y: getRangeRandomNumber(minNumberY, maxNumberY) - MAP_PIN_HIGHT + 'px'
+      x: getRangeRandomNumber(minNumberX, maxNumberX),
+      y: getRangeRandomNumber(minNumberY, maxNumberY)
     };
     placements.push({
       author: {
@@ -72,8 +141,8 @@ var similarPinTemplate = document.querySelector('#pin').content.querySelector('.
 
 var getRenderPin = function (placement) {
   var pinElement = similarPinTemplate.cloneNode(true);
-  pinElement.style.left = placement.location.x;
-  pinElement.style.top = placement.location.y;
+  pinElement.style.left = placement.location.x - MAP_PIN_WIDTH / 2 + 'px';
+  pinElement.style.top = placement.location.y - MAP_PIN_HIGHT + 'px';
   pinElement.querySelector('img').setAttribute('src', placement.author.avatar);
   pinElement.querySelector('img').setAttribute('alt', placement.offer.title);
   return pinElement;
@@ -88,3 +157,38 @@ var getFragment = function () {
 };
 
 similarListElement.appendChild(getFragment());
+
+var roomsNumber = document.querySelector('#room_number');
+var capacity = document.querySelector('#capacity');
+var buttonSubmit = document.querySelector('.ad-form__submit');
+
+var DISABLED_ROOMS = {
+  1: ['1'],
+  2: ['1', '2'],
+  3: ['1', '2', '3'],
+  100: ['0'],
+};
+
+roomsNumber.addEventListener('click', function () {
+  for (var j = 0; j < capacity.options.length; j++) {
+    capacity[j].disabled = !DISABLED_ROOMS[roomsNumber.value].includes(capacity.options[j].value);
+  }
+});
+
+roomsNumber.addEventListener('keydown', function () {
+  for (var j = 0; j < capacity.options.length; j++) {
+    capacity[j].disabled = !DISABLED_ROOMS[roomsNumber.value].includes(capacity.options[j].value);
+  }
+});
+
+var validateCapacity = function () {
+  if (DISABLED_ROOMS[roomsNumber.value].includes(capacity.value)) {
+    capacity.setCustomValidity('');
+  } else {
+    capacity.setCustomValidity('Выбрано некорректное количество комнат');
+  }
+};
+
+buttonSubmit.addEventListener('click', function () {
+  validateCapacity();
+});
