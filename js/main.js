@@ -20,6 +20,11 @@ var MAP_MIN_HIGHT = 130;
 var MAP_MAX_HIGHT = 630;
 var MAP_PIN_MAIN_WIDTH = 65;
 var MAP_PIN_MAIN_HEIGHT = 85;
+var MAIN_PIN_LOCATION = {
+  left: 570,
+  top: 375,
+};
+
 // функция случайного числа max
 var getRandomNumber = function (max) {
   return Math.floor(max * Math.random());
@@ -34,77 +39,6 @@ var minNumberX = MAP_GAP_X;
 var maxNumberX = MAP_WIDTH - MAP_GAP_X;
 var minNumberY = MAP_MIN_HIGHT;
 var maxNumberY = MAP_MAX_HIGHT;
-
-var mapPinMain = document.querySelector('.map__pin--main');
-var inputAddress = document.querySelector('#address');
-
-
-var mapPinLocation = function () {
-  var vrt = {
-    open: {
-      left: 570,
-      top: 375,
-    },
-  };
-  inputAddress.placeholder = vrt.open.left + Math.floor(MAP_PIN_MAIN_WIDTH / 2) + ' ' + (vrt.open.top + MAP_PIN_MAIN_HEIGHT);
-};
-mapPinLocation();
-
-
-// Ф-ия откл/вкл полей формы
-// var getDisabledFieldset = function (field) {
-//   for (var k = 0; k < field.length; k++) {
-//     field[k].setAttribute('disabled', 'true');
-//   }
-// };
-
-// var getFieldset = function (field) {
-//   for (var k = 0; k < field.length; k++) {
-//     field[k].removeAttribute('disabled');
-//   }
-// };
-
-// // Отключение полей формы объявления
-// var fieldsetForm = document.querySelector('.ad-form--disabled');
-// getDisabledFieldset(fieldsetForm);
-
-// // Отключение полей формы на карте
-// var fieldsetFormMap = document.querySelector('.map__filters');
-// getDisabledFieldset(fieldsetFormMap);
-
-var getMapOpen = function () {
-  var mapCity = document.querySelector('.map');
-  mapCity.classList.remove('map--faded');
-};
-// getMapOpen();
-
-// var mapPinMain = document.querySelector('.map__pin--main');
-// mapPinMain.addEventListener('mousedown', function (evt) {
-//   if (evt.which === 1) {
-//     getMapOpen();
-//     getFieldset(fieldsetForm);
-//     getFieldset(fieldsetFormMap);
-//   }
-// });
-
-// mapPinMain.addEventListener('keydown', function (evt) {
-//   if (evt.key === 'Enter') {
-//     getMapOpen();
-//     getFieldset(fieldsetForm);
-//     getFieldset(fieldsetFormMap);
-//   }
-// });
-
-// var type = document.querySelector('#type');
-// var price = document.querySelector('#price');
-
-
-// type.addEventListener('change', function () {
-//   if () {
-
-//   }
-// });
-
 
 var placements = [];
 var fillPlacements = function () {
@@ -157,6 +91,63 @@ var getFragment = function () {
 };
 
 similarListElement.appendChild(getFragment());
+
+// Ф-ия откл/вкл полей формы
+var getDisabledFieldset = function (field) {
+  for (var k = 0; k < field.length; k++) {
+    field[k].setAttribute('disabled', 'true');
+  }
+};
+
+var getFieldset = function (field) {
+  for (var k = 0; k < field.length; k++) {
+    field[k].removeAttribute('disabled');
+  }
+};
+
+// Отключение полей формы объявления
+var fieldsetForm = document.querySelector('.ad-form--disabled');
+getDisabledFieldset(fieldsetForm);
+
+// Отключение полей формы на карте
+var fieldsetFormMap = document.querySelector('.map__filters');
+getDisabledFieldset(fieldsetFormMap);
+
+var getMapOpen = function () {
+  var mapCity = document.querySelector('.map');
+  mapCity.classList.remove('map--faded');
+};
+
+var inputAddress = document.querySelector('#address');
+// Координаты для поля адрес в скрытом состоянии
+var mapPinLocationFaded = function (x, y, width, height) {
+  inputAddress.placeholder = x + Math.floor(width / 2) + ', ' + (y + Math.floor(height / 2));
+};
+mapPinLocationFaded(MAIN_PIN_LOCATION.left, MAIN_PIN_LOCATION.top, MAP_PIN_MAIN_WIDTH, MAP_PIN_MAIN_HEIGHT);
+
+// Координаты для поля адрес в активном состоянии
+var mapPinLocationActive = function (x, y, width, height) {
+  inputAddress.placeholder = x + Math.floor(width / 2) + ', ' + (y + height);
+};
+
+var mapPinMain = document.querySelector('.map__pin--main');
+mapPinMain.addEventListener('mousedown', function (evt) {
+  if (evt.which === 1) {
+    getMapOpen();
+    getFieldset(fieldsetForm);
+    getFieldset(fieldsetFormMap);
+    mapPinLocationActive(MAIN_PIN_LOCATION.left, MAIN_PIN_LOCATION.top, MAP_PIN_MAIN_WIDTH, MAP_PIN_MAIN_HEIGHT);
+  }
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    getMapOpen();
+    getFieldset(fieldsetForm);
+    getFieldset(fieldsetFormMap);
+    mapPinLocationActive(MAIN_PIN_LOCATION.left, MAIN_PIN_LOCATION.top, MAP_PIN_MAIN_WIDTH, MAP_PIN_MAIN_HEIGHT);
+  }
+});
 
 var roomsNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
